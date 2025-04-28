@@ -1,0 +1,13 @@
+{
+  "name": "randaudio-web",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "wav-encoder": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "@types/wav-encoder": "^1.3.3",
+    "typescript": "^5.8.3"
+  }
+}
