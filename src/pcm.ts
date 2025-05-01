@@ -31,13 +31,6 @@ export function pcmToToneAudio(pcmData: Uint8Array, sampleRate: number = 44100):
   };
 }
 
-// Sample PCM data — you can replace this with your own buffer
-const examplePCM: Uint8Array<ArrayBuffer> = Uint8Array.from({ length: 30 }, () => Math.floor(Math.random() * 256));
-
-const toneAudio: AudioData = pcmToToneAudio(examplePCM);
-
-const wavBuffer: Blob = encodeWav(toneAudio);
-
 /**
  * Encodes a Float32Array of audio samples to a WAV Blob using wav-encoder.
  */
