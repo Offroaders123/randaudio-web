@@ -1,15 +1,14 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import WavEncoder from "wav-encoder";
+import WavEncoder, { type AudioData } from "wav-encoder";
 
 /**
  * Converts a Uint8Array of PCM bytes into audio by mapping each byte to a frequency.
  * Each frequency becomes a short tone in the output buffer.
- * @param {Uint8Array} pcmData - The raw PCM byte data.
- * @param {number} sampleRate - Audio sample rate (e.g. 44100).
- * @returns {import("wav-encoder").AudioData}
+ * @param pcmData - The raw PCM byte data.
+ * @param sampleRate - Audio sample rate (e.g. 44100).
  */
-function pcmToToneAudio(pcmData, sampleRate = 44100) {
+function pcmToToneAudio(pcmData: Uint8Array, sampleRate: number = 44100): AudioData {
   const toneDuration = 0.1; // seconds per tone
   const samplesPerTone = Math.floor(sampleRate * toneDuration);
   const totalSamples = samplesPerTone * pcmData.length;
