@@ -1,5 +1,3 @@
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import WavEncoder, { type AudioData } from "wav-encoder";
 
 /**
@@ -8,7 +6,7 @@ import WavEncoder, { type AudioData } from "wav-encoder";
  * @param pcmData - The raw PCM byte data.
  * @param sampleRate - Audio sample rate (e.g. 44100).
  */
-function pcmToToneAudio(pcmData: Uint8Array, sampleRate: number = 44100): AudioData {
+export function pcmToToneAudio(pcmData: Uint8Array, sampleRate: number = 44100): AudioData {
   const toneDuration: number = 0.1; // seconds per tone
   const samplesPerTone: number = Math.floor(sampleRate * toneDuration);
   const totalSamples: number = samplesPerTone * pcmData.length;
@@ -38,6 +36,12 @@ const examplePCM: Uint8Array<ArrayBuffer> = Uint8Array.from({ length: 30 }, () =
 
 const toneAudio: AudioData = pcmToToneAudio(examplePCM);
 
-const wavBuffer: Buffer<ArrayBuffer> = Buffer.from(await WavEncoder.encode(toneAudio));
+const wavBuffer: Blob = encodeWav(toneAudio);
 
-await writeFile(join(import.meta.dirname, "pcm-tones.wav"), wavBuffer);
+/**
+ * Encodes a Float32Array of audio samples to a WAV Blob using wav-encoder.
+ */
+export function encodeWav(audioData: AudioData): Blob {
+  const wavBuffer: ArrayBuffer = WavEncoder.encode.sync(audioData);
+  return new Blob([wavBuffer], { type: "audio/wav" });
+}
