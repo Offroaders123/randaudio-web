@@ -10,9 +10,7 @@ export default function PCMPlayer() {
   function handleGenerate(): void {
     setLoading(true);
 
-    // Sample PCM data — you can replace this with your own buffer
-    const examplePCM: Uint8Array<ArrayBuffer> = Uint8Array.from({ length: 30 }, () => Math.floor(Math.random() * 256));
-    const toneAudio: AudioData = buildSound(pcmToTones(examplePCM), {
+    const toneAudio: AudioData = buildSound(pcmToTones({ dataLength: 30 }), {
       duration: 4, // 4 seconds total
       sampleRate: 44100,
       channels: 2

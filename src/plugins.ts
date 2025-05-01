@@ -1,7 +1,11 @@
 import type { SoundPlugin } from "./pcm.ts";
 
-export function pcmToTones(pcmData: Uint8Array): SoundPlugin {
+export function pcmToTones(options: { dataLength: number; /* number of PCM bytes */ }): SoundPlugin {
   return ({ length, sampleRate, channels }) => {
+    // Step 1: Define the PCM pattern based on options
+    const pcmData: Uint8Array<ArrayBuffer> = new Uint8Array(options.dataLength)
+      .map(() => Math.floor(Math.random() * 256));  // You can change this to a formula
+
     const samplesPerTone: number = Math.floor(length / pcmData.length);
 
     const output: Float32Array[] = Array.from({ length: channels }, () => new Float32Array(length));
