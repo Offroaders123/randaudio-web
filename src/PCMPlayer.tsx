@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import type { AudioData } from "wav-encoder";
-import { encodeWav, pcmToToneAudio } from "./pcm.ts";
+import { buildSound, encodeWav } from "./pcm.ts";
+import { pcmToTones } from "./plugins.ts";
 
 export default function PCMPlayer() {
   const [audioSrc, setAudioSrc] = createSignal<string | null>(null);
@@ -11,7 +12,11 @@ export default function PCMPlayer() {
 
     // Sample PCM data — you can replace this with your own buffer
     const examplePCM: Uint8Array<ArrayBuffer> = Uint8Array.from({ length: 30 }, () => Math.floor(Math.random() * 256));
-    const toneAudio: AudioData = pcmToToneAudio(examplePCM);
+    const toneAudio: AudioData = buildSound(pcmToTones(examplePCM), {
+      duration: 4, // 4 seconds total
+      sampleRate: 44100,
+      channels: 2
+    });
     const wavBuffer: Blob = encodeWav(toneAudio);
 
     setAudioSrc(URL.createObjectURL(wavBuffer));

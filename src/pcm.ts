@@ -1,33 +1,32 @@
 import WavEncoder, { type AudioData } from "wav-encoder";
 
-/**
- * Converts a Uint8Array of PCM bytes into audio by mapping each byte to a frequency.
- * Each frequency becomes a short tone in the output buffer.
- * @param pcmData - The raw PCM byte data.
- * @param sampleRate - Audio sample rate (e.g. 44100).
- */
-export function pcmToToneAudio(pcmData: Uint8Array, sampleRate: number = 44100): AudioData {
-  const toneDuration: number = 0.1; // seconds per tone
-  const samplesPerTone: number = Math.floor(sampleRate * toneDuration);
-  const totalSamples: number = samplesPerTone * pcmData.length;
+export type SoundPlugin = (opts: { length: number; sampleRate: number; channels: number; }) => Float32Array[];
 
-  const left: Float32Array<ArrayBuffer> = new Float32Array(totalSamples);
-  const right: Float32Array<ArrayBuffer> = new Float32Array(totalSamples);
+export interface BuildOptions {
+  /** in seconds */
+  duration: number;
+  /** default 44100 */
+  sampleRate?: number;
+  /** default 2 */
+  channels?: number;
+}
 
-  pcmData.forEach((byte, i) => {
-    const freq: number = 200 + (byte / 255) * 1800; // Map 0-255 to 200Hz–2000Hz
-    for (let t: number = 0; t < samplesPerTone; t++) {
-      const sampleIndex: number = i * samplesPerTone + t;
-      const phase: number = (2 * Math.PI * freq * t) / sampleRate;
-      const sample: number = Math.sin(phase) * 0.3;
-      left[sampleIndex] = sample;
-      right[sampleIndex] = sample;
-    }
+export function buildSound(plugin: SoundPlugin, { duration, sampleRate = 44100, channels = 2 }: BuildOptions): AudioData {
+  const totalSamples: number = Math.floor(duration * sampleRate);
+
+  const channelData: Float32Array[] = plugin({
+    length: totalSamples,
+    sampleRate,
+    channels
   });
+
+  if (channelData.length !== channels) {
+    throw new Error(`Plugin returned ${channelData.length} channels but expected ${channels}`);
+  }
 
   return {
     sampleRate,
-    channelData: [left, right]
+    channelData
   };
 }
 
