@@ -5,9 +5,9 @@ export interface PCMPluginOptions {
   duration?: number;
 }
 
-export type PCMPlugin = (options: PCMPluginOptions) => AudioData;
+export type PCMPlugin<T extends object = {}> = (options: PCMPluginOptions & T) => AudioData;
 
-export function buildSound(plugin: PCMPlugin, options: PCMPluginOptions): AudioData {
+export function buildSound<T extends PCMPlugin>(plugin: T, options: Parameters<T>[0]): AudioData {
   return plugin(options);
 }
 

@@ -1,6 +1,6 @@
 import type { PCMPlugin } from "./pcm.ts";
 
-export const sineWavePlugin: PCMPlugin = (options) => {
+export const sineWavePlugin: PCMPlugin<{ frequency?: number; }> = (options) => {
   const sampleRate = options.sampleRate ?? 44100;
   const duration = options.duration ?? 1;
   const frequency = options.frequency ?? 440;
