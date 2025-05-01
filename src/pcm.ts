@@ -1,33 +1,14 @@
 import WavEncoder, { type AudioData } from "wav-encoder";
 
-export type SoundPlugin = (opts: { length: number; sampleRate: number; channels: number; }) => Float32Array[];
-
-export interface BuildOptions {
-  /** in seconds */
-  duration: number;
-  /** default 44100 */
+export interface PCMPluginOptions {
   sampleRate?: number;
-  /** default 2 */
-  channels?: number;
+  duration?: number;
 }
 
-export function buildSound(plugin: SoundPlugin, { duration, sampleRate = 44100, channels = 2 }: BuildOptions): AudioData {
-  const totalSamples: number = Math.floor(duration * sampleRate);
+export type PCMPlugin = (options: PCMPluginOptions) => AudioData;
 
-  const channelData: Float32Array[] = plugin({
-    length: totalSamples,
-    sampleRate,
-    channels
-  });
-
-  if (channelData.length !== channels) {
-    throw new Error(`Plugin returned ${channelData.length} channels but expected ${channels}`);
-  }
-
-  return {
-    sampleRate,
-    channelData
-  };
+export function buildSound(plugin: PCMPlugin, options: PCMPluginOptions): AudioData {
+  return plugin(options);
 }
 
 /**

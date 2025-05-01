@@ -1,29 +1,20 @@
-import type { SoundPlugin } from "./pcm.ts";
+import type { PCMPlugin } from "./pcm.ts";
 
-export function pcmToTones(options: { dataLength: number; /* number of PCM bytes */ }): SoundPlugin {
-  return ({ length, sampleRate, channels }) => {
-    // Step 1: Define the PCM pattern based on options
-    const pcmData: Uint8Array<ArrayBuffer> = new Uint8Array(options.dataLength)
-      .map(() => Math.floor(Math.random() * 256));  // You can change this to a formula
+export const sineWavePlugin: PCMPlugin = (options) => {
+  const sampleRate = options.sampleRate ?? 44100;
+  const duration = options.duration ?? 1;
+  const frequency = options.frequency ?? 440;
+  
+  const totalSamples = Math.floor(sampleRate * duration);
+  const buffer = new Float32Array(totalSamples);
 
-    const samplesPerTone: number = Math.floor(length / pcmData.length);
+  for (let i = 0; i < totalSamples; i++) {
+    const t = i / sampleRate;
+    buffer[i] = Math.sin(2 * Math.PI * frequency * t) * 0.5;
+  }
 
-    const output: Float32Array[] = Array.from({ length: channels }, () => new Float32Array(length));
-
-    pcmData.forEach((byte, i) => {
-      const freq: number = 200 + (byte / 255) * 1800; // 200Hz–2000Hz
-
-      for (let t: number = 0; t < samplesPerTone; t++) {
-        const sampleIndex: number = i * samplesPerTone + t;
-        const phase: number = (2 * Math.PI * freq * t) / sampleRate;
-        const sample: number = Math.sin(phase) * 0.3;
-
-        for (let c: number = 0; c < channels; c++) {
-          output[c]![sampleIndex] = sample;
-        }
-      }
-    });
-
-    return output;
+  return {
+    sampleRate,
+    channelData: [buffer, buffer]
   };
-}
+};

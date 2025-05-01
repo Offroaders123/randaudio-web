@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import type { AudioData } from "wav-encoder";
 import { buildSound, encodeWav } from "./pcm.ts";
-import { pcmToTones } from "./plugins.ts";
+import { sineWavePlugin } from "./plugins.ts";
 
 export default function PCMPlayer() {
   const [audioSrc, setAudioSrc] = createSignal<string | null>(null);
@@ -10,10 +10,9 @@ export default function PCMPlayer() {
   function handleGenerate(): void {
     setLoading(true);
 
-    const toneAudio: AudioData = buildSound(pcmToTones({ dataLength: 30 }), {
+    const toneAudio: AudioData = buildSound(sineWavePlugin, {
       duration: 4, // 4 seconds total
-      sampleRate: 44100,
-      channels: 2
+      sampleRate: 44100
     });
     const wavBuffer: Blob = encodeWav(toneAudio);
 
