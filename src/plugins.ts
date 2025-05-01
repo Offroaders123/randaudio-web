@@ -8,7 +8,7 @@ import type { PCMPlugin } from "./pcm.ts";
 export const pcmToTones: PCMPlugin = ({ sampleRate = 44100 }): AudioData => {
   // Sample PCM data — you can replace this with your own buffer
   const pcmData: Uint8Array<ArrayBuffer> = Uint8Array.from({ length: 30 }, () => Math.floor(Math.random() * 256));
-  const toneDuration: number = 0.05; // seconds per tone
+  const toneDuration: number = 0.1; // seconds per tone
   const samplesPerTone: number = Math.floor(sampleRate * toneDuration);
   const totalSamples: number = samplesPerTone * pcmData.length;
 
